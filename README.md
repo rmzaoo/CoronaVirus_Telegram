@@ -13,7 +13,6 @@
 - You have a Config Class for put you bot token and channel_id.
 - You need to have the pip installed and do 
     ```$ pip install requests```
-    ```$ pip install time```
 
 
 ## Author 
