@@ -21,9 +21,9 @@ def sendtochannel(bot_message):
 while True:
     responsecasos = requests.get(Config.ApiCasos).json()
     ativos = responsecasos['features'][0]['attributes']['Activos_ARS']
-    recuperados = responsecasos['features'][0]['attributes']['Activos_ARS']
-    obitos = responsecasos['features'][0]['attributes']['ConfirmadosAcumulado_ARS']
-    confirmados = responsecasos['features'][0]['attributes']['Activos_ARS']
+    recuperados = responsecasos['features'][0]['attributes']['Recuperados_ARS']
+    obitos = responsecasos['features'][0]['attributes']['Obitos_ARS']
+    confirmados = responsecasos['features'][0]['attributes']['ConfirmadosAcumulado_ARS']
 
     responsecasos = requests.get(Config.ApiTestes).json()
     testesfeitos = responsecasos['features'][0]['attributes']['value']
