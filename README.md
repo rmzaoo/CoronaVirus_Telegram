@@ -23,6 +23,10 @@ This project is written by [RMzaoo](https://rafaelmartins.pt).
 
 
 ## Changelog ##
+#### Version 0.1.1 (17 05 2021) ####
+- Only send information when it changes
+- Save data in data.bin file
+- Changed refresh time
 #### Version 0.1.0 (26 04 2021) ####
 - Initial release.
 
