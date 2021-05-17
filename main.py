@@ -1,5 +1,12 @@
 import requests
 import time
+from datetime import datetime
+import json
+
+print("\n\n=========================")
+print("https://github.com/rmzaoo")
+print("=========================\n\n")
+
 
 class Config:
     ApiCasos = 'https://services.arcgis.com/CCZiGSEQbAxxFVh3/arcgis/rest/services/COVID_Concelhos_ARS_View2/FeatureServer/0/query?f=json&where=ARSNome%3D%27Nacional%27&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&resultOffset=0&resultRecordCount=50&resultType=standard&cacheHint=true'
@@ -32,14 +39,98 @@ while True:
     responsecasos = requests.get(Config.ApiVacinas).json()
     vacinasdadas = responsecasos['features'][0]['attributes']['value']
 
+    try:
+        with open('data.bin') as json_file:
+            data = json.load(json_file)
 
-    sendtochannel("Ativos: {0}| Recuperados: {1}| Óbitos: {2} | Confirmados: {3} | Total de Testes: {4} | Vacinas Adminstradas: {5} ".format(
-        ativos, recuperados, obitos, confirmados, testesfeitos, vacinasdadas))
-        
-    print("Informação Enviada")
+        Aativos = data["ativos"]
+        Arecuperados = data["recuperados"]
+        Aobitos = data["obitos"]
+        Aconfirmados = data["confirmados"]
+        Atestesfeitos = data["testesfeitos"]
+        Avacinasdadas = data["vacinasdadas"]
+    except:
+        Aativos = ativos
+        Arecuperados = recuperados
+        Aobitos = obitos
+        Aconfirmados = confirmados
+        Atestesfeitos = testesfeitos
+        Avacinasdadas = vacinasdadas        
 
-    print("updated")
 
-    time.sleep(21600) #6 horas
+    now = datetime.now()
+    current_time = now.strftime("%d/%m/%Y %H:%M:%S")
+    text = 'Covid-19 Portugal - Atualização '+current_time+'\n\n'
+
+    a = (Aativos - ativos)
+    if a >= 0:
+        if a != 0:
+            text = text + 'Subida de `'+str(a)+'` Caso/s Ativos | `'+str(ativos)+'` \n\n'
+    else:
+        text = text + 'Descida de `'+str(a)+'` Caso/s Ativos | `'+str(ativos)+'` \n\n'
+
+    a = (Arecuperados - recuperados)
+    if a >= 0:
+        if a != 0:
+            text = text + 'Subida de `'+str(a)+'` Recuperado/s | `'+str(recuperados)+'` \n\n'
+    else:
+        text = text + 'Descida de `'+str(a)+'` Recuperado/s | `'+str(recuperados)+'` \n\n'
+    
+    a = (Aobitos - obitos)
+    if a >= 0:
+        if a != 0:
+            text = text + 'Subida de `'+str(a)+'` Obito/s | `'+str(obitos)+'` \n\n'
+    else:
+        text = text + 'Descida de `'+str(a)+'` Obito/s | `'+str(obitos)+'` \n\n'
+
+
+    a = (Aconfirmados - confirmados)
+    if a >= 0:
+        if a != 0:
+            text = text + 'Subida de `'+str(a)+'` Confirmado/s | `'+str(confirmados)+'` \n\n'
+    else:
+        text = text + 'Descida de `'+str(a)+'` Confirmado/s | `'+str(confirmados)+'` \n\n'
+
+
+    a = (Atestesfeitos - testesfeitos)
+    if a >= 0:
+        if a != 0:
+            text = text + 'Subida de `'+str(a)+'` Teste/s Feito/s | `'+str(testesfeitos)+'` \n\n'
+    else:
+        text = text + 'Descida de `'+str(a)+'` Teste/s Feito/s | `'+str(testesfeitos)+'` \n\n'
+
+    a = (Avacinasdadas - vacinasdadas)
+    if a >= 0:
+        if a != 0:
+            text = text + 'Subida de `'+str(a)+'` Vacinado/s | `'+str(vacinasdadas)+'` \n\n'
+    else:
+        text = text + 'Descida de `'+str(a)+'` Vacinado/s | `'+str(vacinasdadas)+'` \n\n'
+
+
+    if Aativos != ativos:
+        response = sendtochannel(text)
+        print("API: Foi encontrado novos dados")
+
+        if response['ok'] == False :
+            print('Telegram Bot: Ocorreu um erro a enviar a mensagem.\n\n'+str(response)+'\n')
+        else:
+            print("Telegram Bot: Foi envido uma atualização dos novos dados")
+    else:
+        print("API: Não existe ainda nenhuma atualização dos dados")
+
+    data_set = {}
+    data_set['ativos'] = ativos
+    data_set['recuperados'] = recuperados
+    data_set['obitos'] = obitos
+    data_set['confirmados'] = confirmados
+    data_set['testesfeitos'] = testesfeitos
+    data_set['vacinasdadas'] = vacinasdadas
+
+    with open('data.bin', 'w') as outfile:
+        json.dump(data_set, outfile)
+
+    print("APP: Dados Guardados com Sucesso")
+
+    time.sleep(10800) #3 horas
 
 
